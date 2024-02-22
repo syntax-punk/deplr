@@ -1,5 +1,6 @@
 import fs from 'fs';
 import * as AWS from 'aws-sdk';
+import { sleep } from './utils';
 
 let s3: any;
 
