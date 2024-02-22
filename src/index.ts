@@ -3,8 +3,11 @@ import cors from 'cors';
 import git from 'simple-git';
 import path from 'path';
 import { generateRandomId } from './utils';
-import { getAllFiles } from './fileKeeper';
+import { getAllFilePaths } from './fileKeeper';
+import dotenv from 'dotenv';
+import { uploadToS3 } from './aws';
 
+dotenv.config();
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -16,10 +19,14 @@ app.get('/', (req, res) => {
 app.post('/deploy', async (req, res) => {
   const url = req.body.repoUrl;
   const id = generateRandomId();
-  const projPath = path.join(__dirname, 'tmp', id);
+  const projPath = path.join(__dirname, 'output', id);
   await git().clone(url, projPath);
 
-  const files = getAllFiles(projPath);
+  const paths = getAllFilePaths(projPath);
+  paths.forEach(async (path) => {
+    const localPath = path.slice(__dirname.length + 1);
+    await uploadToS3(localPath, path);
+  });
 
   return res.json({
     id

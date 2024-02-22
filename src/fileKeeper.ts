@@ -1,7 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 
-export function getAllFiles(target: string) {
+export function getAllFilePaths(target: string) {
   let result: string[] = [];
   const folderData = fs.readdirSync(target)
 
@@ -9,7 +9,7 @@ export function getAllFiles(target: string) {
     const itemPath = path.join(target, item)
     const isDir = fs.statSync(itemPath).isDirectory()
     if (isDir) {
-      result = result.concat(getAllFiles(itemPath))
+      result = result.concat(getAllFilePaths(itemPath))
     } else {
       result.push(itemPath)
     }
