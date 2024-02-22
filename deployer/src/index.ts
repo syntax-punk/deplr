@@ -2,10 +2,11 @@ import express from 'express';
 import cors from 'cors';
 import git from 'simple-git';
 import path from 'path';
-import { generateRandomId } from './utils';
-import { getAllFilePaths } from './fileKeeper';
+import { generateRandomId } from './lib/utils';
+import { getAllFilePaths } from './lib/fileKeeper';
 import dotenv from 'dotenv';
-import { uploadToS3 } from './aws';
+import { uploadToS3 } from './lib/aws';
+import { publisher } from './lib/redis';
 
 dotenv.config();
 const app = express();
@@ -27,6 +28,8 @@ app.post('/deploy', async (req, res) => {
     const localPath = path.slice(__dirname.length + 1);
     await uploadToS3(localPath, path);
   });
+
+  publisher.lPush("build-q", id);
 
   return res.json({
     id
