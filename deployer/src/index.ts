@@ -8,6 +8,8 @@ import dotenv from 'dotenv';
 import { uploadToS3 } from './lib/aws';
 import { publisher } from './lib/redis';
 
+const PORT = 1337;
+
 dotenv.config();
 const app = express();
 app.use(cors());
@@ -36,6 +38,6 @@ app.post('/deploy', async (req, res) => {
   })
 });
 
-app.listen(3000, () => {
-  console.log('Server is running on port 3000');
+app.listen(PORT, () => {
+  console.log('-> Deployer listening on: ', PORT);
 });

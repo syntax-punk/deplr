@@ -2,7 +2,12 @@ import path from 'path';
 import fs from 'fs';
 import * as AWS from 'aws-sdk';
 import { sleep } from './utils';
-import { getAllFilePaths } from './fileKeeper';
+
+AWS.config.update({
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  region: process.env.AWS_REGION
+});
 
 let s3: any;
 
@@ -10,15 +15,8 @@ function getS3() {
   if (!s3) {
     s3 = new AWS.S3();
   }
-
   return s3;
 }
-
-AWS.config.update({
-  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-  region: process.env.AWS_REGION
-});
 
 export async function uploadToS3(fileName: string, fullPath: string) {
   const s3 = getS3();
