@@ -1,12 +1,21 @@
-const MAX_ID_LENGTH = 5;
+import { greenBright, green, redBright, red } from "colorette"
+import { exec } from 'child_process';
 
 export const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-export function generateRandomId(length: number = MAX_ID_LENGTH) {
-  const characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
-  let result = '';
-  for (let i = 0; i < length; i++) {
-    result += characters.charAt(Math.floor(Math.random() * characters.length));
-  }
-  return result;
+export function buildProject(target: string) {
+  return new Promise((resolve) => {
+      const child = exec(`cd ${target} && npm install && npm run build`)
+
+      child.stdout?.on('data', function(data) {
+          console.log(`${greenBright('> building: ')}`,  green(data));
+      });
+      child.stderr?.on('data', function(data) {
+        console.log(`${redBright('! error: ')}`, red(data));
+      });
+
+      child.on('close', function(code) {
+         resolve(true)
+      });
+  })
 }

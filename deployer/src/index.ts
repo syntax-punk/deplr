@@ -1,43 +1,54 @@
-import express from 'express';
-import cors from 'cors';
-import git from 'simple-git';
 import path from 'path';
-import { generateRandomId } from './lib/utils';
-import { getAllFilePaths } from './lib/fileKeeper';
 import dotenv from 'dotenv';
-import { uploadToS3 } from './lib/aws';
-import { publisher } from './lib/redis';
-
-const PORT = 1337;
+import { commandOptions } from 'redis';
+import { publisher, subscriber } from './lib/redis';
+import { downloadFromS3, uploadToS3 } from './lib/aws';
+import { buildProject } from './lib/utils';
+import { getAllFilePaths } from './lib/fileKeeper';
 
 dotenv.config();
-const app = express();
-app.use(cors());
-app.use(express.json());
 
-app.get('/', (req, res) => {
-  res.send('Hello World!');
-});
+async function main() {
+  if (!process.env.MAIN_QUEUE || !process.env.STATUS_QUEUE) {
+    throw new Error('Missing env variables: MAIN_QUEUE, STATUS_QUEUE');
+  }
 
-app.post('/deploy', async (req, res) => {
-  const url = req.body.repoUrl;
-  const id = generateRandomId();
-  const projPath = path.join(__dirname, 'output', id);
-  await git().clone(url, projPath);
+  while (true) {
+    const message = await subscriber.brPop(commandOptions({
+      isolated: true,
+    }), process.env.MAIN_QUEUE, 0);
 
-  const paths = getAllFilePaths(projPath);
-  paths.forEach(async (path) => {
-    const localPath = path.slice(__dirname.length + 1);
-    await uploadToS3(localPath, path);
-  });
+    console.log('--> message: ', message);
 
-  publisher.lPush("build-q", id);
+    if (message) {
+      const id = message.element;
 
-  return res.json({
-    id
-  })
-});
+      try {
+        const source = `output/${id}`;
+        const target = __dirname;
+        const localBuildPath = path.join(target, source);
+        const distPath = path.join(localBuildPath, 'dist')
 
-app.listen(PORT, () => {
-  console.log('-> Deployer listening on: ', PORT);
-});
+        await downloadFromS3(source, target)
+        await buildProject(localBuildPath);
+
+        const filePaths = getAllFilePaths(distPath);
+
+        filePaths.forEach(async (fullPath) => {
+          const localFilePath = fullPath.slice(distPath.length + 1);
+          const fileName = `dist/${id}/${localFilePath}`
+
+          await uploadToS3(fileName, fullPath);
+        });
+
+      } catch (error) {
+        console.error(error);
+      } finally {
+        publisher.hSet(process.env.STATUS_QUEUE, id, "deployed");
+        console.log('--> done');
+      }
+    }
+  }
+}
+
+main();

@@ -4,9 +4,17 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start:uploader": "cd uploader && npm start",
+    "start:deployer": "cd deployer && npm start",
+    "start:server": "cd server && npm start",
+    "start:client": "cd client-app && npm start",
+    "start": "concurrently \"npm run start:uploader\" \"npm run start:deployer\" \"npm run start:server\" \"npm run start:client\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "concurrently": "^8.2.2"
+  }
 }

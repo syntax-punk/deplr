@@ -1,3 +1,4 @@
+import fs from 'fs';
 import * as AWS from 'aws-sdk';
 
 AWS.config.update({
@@ -15,16 +16,18 @@ function getS3() {
   return s3;
 }
 
-export async function getObjectFromS3(id: string, filePath: string) {
+export async function uploadToS3(localPath: string, fullPath: string) {
   const s3 = getS3();
-  const objectKey = `dist/${id}${filePath}`;
+
+  const fileContent = fs.readFileSync(fullPath);
 
   const params = {
     Bucket: process.env.AWS_BUCKET_NAME,
-    Key: objectKey,
+    Key: localPath,
+    Body: fileContent
   };
 
-  const result = await s3.getObject(params).promise();
+  const result = await s3.upload(params).promise();
 
   return result;
 }

@@ -21,7 +21,6 @@ app.get('/*', async (req, res) => {
   const extension = filePath.split('.').pop() || 'html';
   const content = await getObjectFromS3(id, filePath);
   
-  
   res.setHeader('Content-Type', getContentForExtension(extension));
   res.send(content.Body);
 });

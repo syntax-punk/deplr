@@ -1,6 +1,9 @@
 import { createClient } from 'redis';
 
+const subscriber = createClient();
+subscriber.connect();
+
 const publisher = createClient();
 publisher.connect();
 
-export { publisher }
+export { subscriber, publisher }
