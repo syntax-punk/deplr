@@ -11,7 +11,7 @@ import axios from "axios"
 import { AppCard } from "./AppCard"
 import { Loader2Icon } from "lucide-react"
 
-const API_ENDPOINT = import.meta.env.VITE_API_ENDPOINT as string;
+const API_ENDPOINT = `http://${import.meta.env.VITE_API_ENDPOINT as string}:1337`
 
 type Deployment = [id: string, status:string];
 

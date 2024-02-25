@@ -20,10 +20,10 @@ export function AppCard({ appId, appStatus }: Props) {
     <CardContent>
       <div className="space-y-2">
         <Label htmlFor="deployed-url">Deployed URL</Label>
-        <Input id="deployed-url" readOnly type="url" value={`http://${appId}.${WEBSERVER}`} />
+        <Input id="deployed-url" readOnly type="url" value={`http://${appId}.${WEBSERVER}:8080`} />
       </div>
       <br />
-        <a href={`http://${appId}.${WEBSERVER}`} target="_blank">
+        <a href={`http://${appId}.${WEBSERVER}:8080`} target="_blank">
           <Button className="w-full" variant="outline">
             Open
           </Button>

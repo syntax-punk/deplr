@@ -9,7 +9,7 @@ import { getAllFilePaths } from './lib/fileKeeper';
 dotenv.config();
 
 async function main() {
-  if (!process.env.MAIN_QUEUE || !process.env.STATUS_QUEUE) {
+  if (!process.env.MAIN_QUEUE || !process.env.STATUS_QUEUE) {
     throw new Error('Missing env variables: MAIN_QUEUE, STATUS_QUEUE');
   }
 

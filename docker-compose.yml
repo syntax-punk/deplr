@@ -1,0 +1,44 @@
+version: '3'
+
+services:
+  redis:
+    image: redis/redis-stack-server:latest
+    ports:
+      - '6379:6379'
+
+  uploader-service:
+    build:
+      context: ./uploader
+    ports:
+      - '1337:1337'
+    depends_on:
+      - redis
+    environment:
+      - REDIS_HOST=redis
+
+  deployer-service:
+    build:
+      context: ./deployer
+    depends_on:
+      - redis
+    environment:
+      - REDIS_HOST=redis
+
+  server-service:
+    build:
+      context: ./server
+    ports:
+      - '8080:8080'
+    depends_on:
+      - redis
+
+  client-service:
+    build:
+      context: ./client-app
+    ports:
+      - '3000:3000'
+    depends_on:
+      - server-service
+    environment:
+      - VITE_API_ENDPOINT=uploader-service
+      - VITE_DEPLR_SERVER=server-service
