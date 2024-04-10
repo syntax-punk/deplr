@@ -15,8 +15,8 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.get('/', (req, res) => {
-  res.send('Hello, Im deplr uploader!');
+app.get('/ping', (_, res) => {
+  res.send('upload: pong');
 });
 
 app.get('/:id/status', async (req, res) => {

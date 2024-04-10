@@ -20,4 +20,4 @@ EXPOSE 3000
 ENV NODE_ENV=development
 
 # Specify the command to run your application
-CMD [ "npm", "start" ]
+CMD [ "npm", "run", "host" ]

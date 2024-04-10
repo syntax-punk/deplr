@@ -11,6 +11,10 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+app.get('/ping', (_, res) => {
+  res.send('server: pong');
+});
+
 app.get('/*', async (req, res) => {
   const host = req.hostname;
   const id = host.split('.')[0];

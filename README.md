@@ -11,5 +11,7 @@ To run deplr you need couople of things fixed:
    - `MAIN_QUEUE=you_progress_queue_name`
    - `STATUS_QUEUE=you_status_queue_name`
  - deplr is using redis as a message queue so make sure you have a redis server running on your machine or in docker container, deplr will try to connect to `localhost:6379` by default
+ - if you have no redis running on your system or somewhere you can run it via docker by running:
+   - `docker run -d --name redis-stack-server -p 6379:6379 redis/redis-stack-server:latest`
 
 
