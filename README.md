@@ -1,5 +1,7 @@
 ## deplr
 
+deplr is a my `ripoff` to services like netlify or vercel build with nodejs, aws and redis.
+
 To run deplr you need couople of things fixed:
  - Get an aws account and and generate an access key and secret key that has access to the s3 bucket
  - deployer, uploader and server are using accessing s3 bucket so make sure you provide env vars via `.env` file for each of the services
