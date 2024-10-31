@@ -16,7 +16,7 @@ app.use(cors());
 app.use(express.json());
 
 app.get('/ping', (_, res) => {
-  res.send('upload: pong');
+  res.send('uploader: pong');
 });
 
 app.get('/:id/status', async (req, res) => {
